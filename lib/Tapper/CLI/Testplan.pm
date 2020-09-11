@@ -214,6 +214,40 @@ sub testplannew
         return $output;
 }
 
+=head2 testplancancel
+
+Cancel a testplan
+
+=cut
+
+sub testplancancel
+{
+        my ($c) = @_;
+
+        $c->getopt( 'id|i=i@', 'comment=s', 'help|?' );
+        my $opt = $c->options;
+
+        if ( $opt->{help} or not $opt->{id}) {
+                say STDERR "Usage: $0 testplan-cancel --id=number [ --comment=comment ]";
+                say STDERR "";
+                say STDERR "    --id=number        Cancel the testplan with this id. Can be specified multiple times. Required at least once.";
+                say STDERR "    --comment=comment  Specify a comment to add to the cancelled testruns.";
+                say STDERR "    --help             Print this help message and exit.";
+                exit -1;
+        }
+
+        require Tapper::Cmd::Testplan;
+        my $cmd = Tapper::Cmd::Testplan->new();
+
+        my $comment = $opt->{comment} || "Cancelled from Tapper CLI";
+
+        foreach my $testplan (@{$opt->{id}}) {
+                print "Cancelling testplan $testplan\n";
+                $cmd->cancel( $testplan, $comment );
+        }
+        return;
+
+}
 
 =head2 setup
 
@@ -226,6 +260,7 @@ sub setup
         my ($c) = @_;
         $c->register('testplan-send', \&testplansend, 'Send choosen testplan reports');
         $c->register('testplan-list', \&testplanlist, 'List testplans matching a given pattern');
+        $c->register('testplan-cancel', \&testplancancel, 'Cancel testplans with given IDs');
         $c->register('testplan-tj-send', \&testplan_tj_send, 'Send all testplan reports that are due according to taskjuggler plan');
         $c->register('testplan-tj-generate', \&testplan_tj_generate, 'Apply all testplans that are due according to taskjuggler plan');
         $c->register('testplan-new', \&testplannew, 'Create new testplan instance from file');
