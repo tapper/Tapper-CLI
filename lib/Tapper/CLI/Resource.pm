@@ -83,7 +83,7 @@ sub resource_update
 
 sub resource_list {
         my ($c) = @_;
-        $c->getopt( 'name=s@', 'id=i@', 'active', 'free', 'verbose|v', 'help|?' );
+        $c->getopt( 'name=s@', 'id=i@', 'active', 'free', 'json', 'verbose|v', 'help|?' );
         if ( $c->options->{help} ) {
                 say STDERR "$0 resource-list [ --name=s ... ] [ --id=i ... ] [ --free ] [ --active ] [ --verbose ] [ --help ]";
                 say STDERR "    --id            Only show resources with this id. Can be specified multiple times";
@@ -91,6 +91,7 @@ sub resource_list {
                 say STDERR "    --active        Only show resources that are active";
                 say STDERR "    --free          Only show resources that are free";
                 say STDERR "    --verbose       Show extended information";
+                say STDERR "    --json          Give results as json";
                 say STDERR "    --help          Show this help";
                 return;
         }
@@ -117,7 +118,22 @@ sub resource_list {
 
         my $table;
         my @entries = $resources->all;
-        if ($c->options->{verbose}) {
+        if ($c->options->{json}) {
+                require JSON;
+
+                my @json_resources;
+
+                push @json_resources, {
+                        id => $_->id,
+                        name => $_->name,
+                        comment => $_->comment,
+                        active => $_->active ? \1 : \0,
+                        in_use => (defined $_->used_by_scheduling_id) ? \1 : \0,
+                } foreach (@entries);
+                print JSON::encode_json(\@json_resources);
+
+                return;
+        } elsif ($c->options->{verbose}) {
                 $table = Text::Table->new( "ID", "Name", "Comment", "Active", "Status" );
 
 
