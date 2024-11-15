@@ -129,10 +129,12 @@ sub testplanlist
         }
         if ($c->options->{format}) {
                 use Data::Dumper;
-                given(lc($c->options->{format})) {
-                        when ('yaml') { return YAML::XS::Dump(\%inst_data)}
-                        when ('json') { return encode_json(\%inst_data)}
-                        default       { die "unknown format: ",$c->options->{format}}
+                if (lc($c->options->{format}) eq 'yaml') {
+                        return YAML::XS::Dump(\%inst_data);
+                } elsif (lc($c->options->{format}) eq 'json') {
+                        return encode_json(\%inst_data);
+                } else {
+                        die "unknown format: ",$c->options->{format};
                 }
         } else {
                 if ($c->options->{verbose}) {
