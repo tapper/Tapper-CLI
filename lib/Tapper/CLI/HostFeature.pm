@@ -20,7 +20,7 @@ sub ar_get_host_feature_parameters {
         [ 'entry|e=s'   , 'host feature entry',                 ],
         (
             $s_cmd ne 'host-feature-delete'
-                ? ( [ 'value|v=s'   , 'host feature value',         ] )
+                ? ( [ 'value=s'   , 'host feature value',         ] )
                 : ( [ 'force|f'     , 'really delete host feature', ] )
         ),
         [ 'verbose|v'   , 'some more informational output',     ],
