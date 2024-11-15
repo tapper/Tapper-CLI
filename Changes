@@ -1,6 +1,8 @@
 Revision history for {{$dist->name}}
 
 {{$NEXT}}
+
+5.0.8     2024-11-15
         - [BACKWARDS INCOMPATIBLE CHANGE] host-feature-delete - fix option duplicate:
           no short option -v for --value, only for --verbose
         - replace given/when with if/else for newer Perl versions
